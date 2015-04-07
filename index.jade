@@ -1,0 +1,86 @@
+extends base/layout
+
+block title
+  | Welcome to newborn
+
+//-block links
+
+block app
+  .page
+    .spacer-100
+    .container
+      h1 Orde
+        small(style='color: lightgray;') JS
+    
+      .spacer-20
+      
+      ul#decomposed
+        li J
+        li a
+        li v
+        li a
+        li s
+        li c
+        li r
+        li i
+        li p
+        li t
+      
+      span#result(data-result='Javascript')
+      
+      .spacer-40
+      
+      button.pure-button#shuffle
+        span Shuffle
+      
+      
+      
+block scripts
+  script.
+    (function () {
+    
+      'use strict';
+
+      NodeList.prototype.forEach = Array.prototype.forEach;
+      HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
+      NodeList.prototype.on = function (event, listener) {
+        this.forEach(function (el) {
+          el.addEventListener(event, listener);
+        });
+      };
+      
+      var list = document.getElementById('decomposed');
+      var result = document.getElementById('result');
+      var toFind = result.getAttribute('data-result');
+      
+      var sortable = Sortable.create(list, {
+        ghostClass: 'decomposed-ghost',
+        onSort: function () {
+          var word = '';
+          
+          list.querySelectorAll('li').forEach(function (li) {
+            word = word + li.textContent;
+          });
+          
+          console.log(word, toFind);
+          if (word == toFind) {
+            result.textContent = 'Hooray!'
+            result.classList.add('okay');
+          } else {
+            result.textContent = 'Not yet...';
+            result.classList.remove('okay');
+          }
+        }
+      });
+      
+      document.getElementById('shuffle').addEventListener('click', function () {
+        result.textContent = '';
+        result.classList.remove('okay');
+        
+        for (var i = list.children.length; i >= 0; i--) {
+          list.appendChild(list.children[Math.random() * i | 0]);
+        }
+      });
+      
+    })();
