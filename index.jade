@@ -26,7 +26,7 @@ block app
         li p
         li t
       
-      span#result(data-result='Javascript')
+      span#result
       
       .spacer-40
       
@@ -52,7 +52,11 @@ block scripts
       
       var list = document.getElementById('decomposed');
       var result = document.getElementById('result');
-      var toFind = result.getAttribute('data-result');
+      var toFind;
+      
+      list.querySelectorAll('li').forEach(function (li) {
+        toFind = toFind + li.textContent;
+      });
       
       var sortable = Sortable.create(list, {
         ghostClass: 'decomposed-ghost',
