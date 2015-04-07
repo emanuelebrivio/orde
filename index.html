@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head><title>Welcome to newborn</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/pure-min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/style.css"><link rel="shortcut icon" href="/static/img/favicon.ico"></head><body><div class="page"><div class="spacer-100"></div><div class="container"><h1>Orde<small style="color: lightgray;">JS</small></h1><div class="spacer-20"></div><ul id="decomposed"><li>J</li><li>a</li><li>v</li><li>a</li><li>s</li><li>c</li><li>r</li><li>i</li><li>p</li><li>t</li></ul><span id="result" data-result="Javascript"></span><div class="spacer-40"></div><button id="shuffle" class="pure-button"><span>Shuffle</span></button></div></div><script src="/static/js/sortable.js"></script><script>(function () {
+
+  'use strict';
+
+  NodeList.prototype.forEach = Array.prototype.forEach;
+  HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
+  NodeList.prototype.on = function (event, listener) {
+    this.forEach(function (el) {
+      el.addEventListener(event, listener);
+    });
+  };
+  
+  var list = document.getElementById('decomposed');
+  var result = document.getElementById('result');
+  var toFind = result.getAttribute('data-result');
+  
+  var sortable = Sortable.create(list, {
+    ghostClass: 'decomposed-ghost',
+    onSort: function () {
+      var word = '';
+      
+      list.querySelectorAll('li').forEach(function (li) {
+        word = word + li.textContent;
+      });
+      
+      console.log(word, toFind);
+      if (word == toFind) {
+        result.textContent = 'Hooray!'
+        result.classList.add('okay');
+      } else {
+        result.textContent = 'Not yet...';
+        result.classList.remove('okay');
+      }
+    }
+  });
+  
+  document.getElementById('shuffle').addEventListener('click', function () {
+    result.textContent = '';
+    result.classList.remove('okay');
+    
+    for (var i = list.children.length; i >= 0; i--) {
+      list.appendChild(list.children[Math.random() * i | 0]);
+    }
+  });
+  
+})();</script></body></html>
