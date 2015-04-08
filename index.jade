@@ -12,25 +12,27 @@ block app
       h1 Orde
         small(style='color: lightgray;') JS
       
-      p: small Drag letters to compose the word
+      p.label Drag letters to compose the word
     
       .spacer-20
       
-      ul#decomposed
-        li J
-        li a
-        li v
-        li a
-        li s
-        li c
-        li r
-        li i
-        li p
-        li t
+      #orde_1(data-word='social')
+        ul.decomposed
+        span.result
       
-      span#result
+      .spacer-20
       
-      .spacer-40
+      #orde_2(data-word='stylus')
+        ul.decomposed
+        span.result
+      
+      .spacer-20
+      
+      #orde_3(data-word='plasticpanda')
+        ul.decomposed
+        span.result
+      
+      .spacer-60
       
       button.pure-button#shuffle
         span Shuffle
@@ -52,41 +54,75 @@ block scripts
         });
       };
       
-      var list = document.getElementById('decomposed');
-      var result = document.getElementById('result');
-      var toFind = '';
       
-      list.querySelectorAll('li').forEach(function (li) {
-        toFind = toFind + li.textContent;
-      });
-      
-      var sortable = Sortable.create(list, {
-        ghostClass: 'decomposed-ghost',
-        onSort: function () {
-          var word = '';
-          
-          list.querySelectorAll('li').forEach(function (li) {
-            word = word + li.textContent;
-          });
-          
-          console.log(word, toFind);
-          if (word == toFind) {
-            result.textContent = 'Hooray!'
-            result.classList.add('okay');
-          } else {
-            result.textContent = 'Not yet...';
-            result.classList.remove('okay');
-          }
+      /* Shuffle: use this function to sort the list */
+      var shuffleFn = function (listEl) {
+        for (var i = listEl.children.length; i >= 0; i--) {
+          listEl.appendChild(listEl.children[Math.random() * i | 0]);
         }
-      });
+      };
+      
+      /* Init: initial setup for every game */
+      var initOrde = function (o) {
+        // o is the node containing ul.decomposed and span.result
+        var list = o.querySelector('.decomposed');
+        var result = o.querySelector('.result');
+        var toFind = o.getAttribute('data-word');
+        o.removeAttribute('data-word');
+        
+        console.log('o', o);
+        console.log('list', list);
+        console.log('result', result);
+        console.log('toFind', toFind);
+        
+        // Append each letter to the list
+        toFind.split('').forEach(function (letter) {
+          var li = document.createElement('li');
+          li.textContent = letter;
+          list.appendChild(li);
+        });
+        
+        // Shuffle the list to get a random order
+        shuffleFn(list);
+        
+        // Start the Sortable plugin for the current list
+        var sortable = Sortable.create(list, {
+          ghostClass: 'decomposed-ghost',
+          onSort: function () {
+            var word = '';
+
+            list.querySelectorAll('li').forEach(function (li) {
+              word = word + li.textContent;
+            });
+
+            console.log(word, toFind);
+            if (word == toFind) {
+              result.textContent = 'Hooray!'
+              result.classList.add('okay');
+            } else {
+              result.textContent = 'Not yet...';
+              result.classList.remove('okay');
+            }
+          }
+        });
+        
+        
+      };
+      
+      
+      initOrde(document.getElementById('orde_1'));
+      initOrde(document.getElementById('orde_2'));
+      initOrde(document.getElementById('orde_3'));
+      
       
       document.getElementById('shuffle').addEventListener('click', function () {
-        result.textContent = '';
-        result.classList.remove('okay');
-        
-        for (var i = list.children.length; i >= 0; i--) {
-          list.appendChild(list.children[Math.random() * i | 0]);
-        }
+        document.querySelectorAll('ul.decomposed').forEach(function (ordeList) {
+          shuffleFn(ordeList);
+        });
+        document.querySelectorAll('span.result').forEach(function (ordeResult) {
+          ordeResult.textContent = '';
+          ordeResult.classList.remove('okay');
+        });
       });
       
     })();

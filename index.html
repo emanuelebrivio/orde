@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><title>Welcome to newborn</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/pure-min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/grids-responsive-min.css"><link rel="stylesheet" href="static/css/style.css"><link rel="shortcut icon" href="static/img/favicon.ico"></head><body><div class="page"><div class="spacer-100"></div><div class="container"><h1>Orde<small style="color: lightgray;">JS</small></h1><p><small>Drag letters to compose the word</small></p><div class="spacer-20"></div><ul id="decomposed"><li>J</li><li>a</li><li>v</li><li>a</li><li>s</li><li>c</li><li>r</li><li>i</li><li>p</li><li>t</li></ul><span id="result"></span><div class="spacer-40"></div><button id="shuffle" class="pure-button"><span>Shuffle</span></button></div></div><script src="static/js/sortable.js"></script><script>(function () {
+<!DOCTYPE html><html><head><title>Welcome to newborn</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/pure-min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/grids-responsive-min.css"><link rel="stylesheet" href="static/css/style.css"><link rel="shortcut icon" href="static/img/favicon.ico"></head><body><div class="page"><div class="spacer-100"></div><div class="container"><h1>Orde<small style="color: lightgray;">JS</small></h1><p class="label">Drag letters to compose the word</p><div class="spacer-20"></div><div id="orde_1" data-word="social"><ul class="decomposed"></ul><span class="result"></span></div><div class="spacer-20"></div><div id="orde_2" data-word="stylus"><ul class="decomposed"></ul><span class="result"></span></div><div class="spacer-20"></div><div id="orde_3" data-word="plasticpanda"><ul class="decomposed"></ul><span class="result"></span></div><div class="spacer-60"></div><button id="shuffle" class="pure-button"><span>Shuffle</span></button></div></div><script src="static/js/sortable.js"></script><script>(function () {
 
   'use strict';
 
@@ -11,41 +11,75 @@
     });
   };
   
-  var list = document.getElementById('decomposed');
-  var result = document.getElementById('result');
-  var toFind = '';
   
-  list.querySelectorAll('li').forEach(function (li) {
-    toFind = toFind + li.textContent;
-  });
-  
-  var sortable = Sortable.create(list, {
-    ghostClass: 'decomposed-ghost',
-    onSort: function () {
-      var word = '';
-      
-      list.querySelectorAll('li').forEach(function (li) {
-        word = word + li.textContent;
-      });
-      
-      console.log(word, toFind);
-      if (word == toFind) {
-        result.textContent = 'Hooray!'
-        result.classList.add('okay');
-      } else {
-        result.textContent = 'Not yet...';
-        result.classList.remove('okay');
-      }
+  /* Shuffle: use this function to sort the list */
+  var shuffleFn = function (listEl) {
+    for (var i = listEl.children.length; i >= 0; i--) {
+      listEl.appendChild(listEl.children[Math.random() * i | 0]);
     }
-  });
+  };
+  
+  /* Init: initial setup for every game */
+  var initOrde = function (o) {
+    // o is the node containing ul.decomposed and span.result
+    var list = o.querySelector('.decomposed');
+    var result = o.querySelector('.result');
+    var toFind = o.getAttribute('data-word');
+    o.removeAttribute('data-word');
+    
+    console.log('o', o);
+    console.log('list', list);
+    console.log('result', result);
+    console.log('toFind', toFind);
+    
+    // Append each letter to the list
+    toFind.split('').forEach(function (letter) {
+      var li = document.createElement('li');
+      li.textContent = letter;
+      list.appendChild(li);
+    });
+    
+    // Shuffle the list to get a random order
+    shuffleFn(list);
+    
+    // Start the Sortable plugin for the current list
+    var sortable = Sortable.create(list, {
+      ghostClass: 'decomposed-ghost',
+      onSort: function () {
+        var word = '';
+
+        list.querySelectorAll('li').forEach(function (li) {
+          word = word + li.textContent;
+        });
+
+        console.log(word, toFind);
+        if (word == toFind) {
+          result.textContent = 'Hooray!'
+          result.classList.add('okay');
+        } else {
+          result.textContent = 'Not yet...';
+          result.classList.remove('okay');
+        }
+      }
+    });
+    
+    
+  };
+  
+  
+  initOrde(document.getElementById('orde_1'));
+  initOrde(document.getElementById('orde_2'));
+  initOrde(document.getElementById('orde_3'));
+  
   
   document.getElementById('shuffle').addEventListener('click', function () {
-    result.textContent = '';
-    result.classList.remove('okay');
-    
-    for (var i = list.children.length; i >= 0; i--) {
-      list.appendChild(list.children[Math.random() * i | 0]);
-    }
+    document.querySelectorAll('ul.decomposed').forEach(function (ordeList) {
+      shuffleFn(ordeList);
+    });
+    document.querySelectorAll('span.result').forEach(function (ordeResult) {
+      ordeResult.textContent = '';
+      ordeResult.classList.remove('okay');
+    });
   });
   
 })();</script></body></html>
