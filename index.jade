@@ -70,11 +70,6 @@ block scripts
         var toFind = o.getAttribute('data-word');
         o.removeAttribute('data-word');
         
-        console.log('o', o);
-        console.log('list', list);
-        console.log('result', result);
-        console.log('toFind', toFind);
-        
         // Append each letter to the list
         toFind.split('').forEach(function (letter) {
           var li = document.createElement('li');
@@ -94,8 +89,8 @@ block scripts
             list.querySelectorAll('li').forEach(function (li) {
               word = word + li.textContent;
             });
-
-            console.log(word, toFind);
+            
+            // Check the word
             if (word == toFind) {
               result.textContent = 'Hooray!'
               result.classList.add('okay');
